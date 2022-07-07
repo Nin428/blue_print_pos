@@ -178,6 +178,10 @@ class BluePrintPos {
     );
   }
 
+  Future<void> printBytes(List<int> byteBuffer) async {
+    return _printProcess(byteBuffer);
+  }
+
   /// Reusable method for print text, image or QR based value [byteBuffer]
   /// Handler Android or iOS will use method writeBytes from ByteBuffer
   /// But in iOS more complex handler using service and characteristic
