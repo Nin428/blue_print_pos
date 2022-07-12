@@ -242,35 +242,34 @@ class BluePrintPos {
                 .write(byteBuffer, withoutResponse: true);
           }
         }
-        return;
 
-        final List<flutter_blue.BluetoothCharacteristic>
-            writableCharacteristics = bluetoothService.characteristics
-                .where((flutter_blue.BluetoothCharacteristic
-                        bluetoothCharacteristic) =>
-                    bluetoothCharacteristic.properties.write == true)
-                .toList();
+        // final List<flutter_blue.BluetoothCharacteristic>
+        //     writableCharacteristics = bluetoothService.characteristics
+        //         .where((flutter_blue.BluetoothCharacteristic
+        //                 bluetoothCharacteristic) =>
+        //             bluetoothCharacteristic.properties.write == true)
+        //         .toList();
 
-        if (writableCharacteristics.isNotEmpty) {
-          print('services writable');
-          await writableCharacteristics[0]
-              .write(byteBuffer, withoutResponse: true);
-        } else {
-          final List<flutter_blue.BluetoothCharacteristic>
-              writableWithoutResponseCharacteristics = bluetoothService
-                  .characteristics
-                  .where((flutter_blue.BluetoothCharacteristic
-                          bluetoothCharacteristic) =>
-                      bluetoothCharacteristic.properties.writeWithoutResponse ==
-                      true)
-                  .toList();
-          if (writableWithoutResponseCharacteristics.isNotEmpty) {
-            print(
-                'services writableWithoutResponse = ${writableWithoutResponseCharacteristics.length}');
-            await writableWithoutResponseCharacteristics[0]
-                .write(byteBuffer, withoutResponse: true);
-          }
-        }
+        // if (writableCharacteristics.isNotEmpty) {
+        //   print('services writable');
+        //   await writableCharacteristics[0]
+        //       .write(byteBuffer, withoutResponse: true);
+        // } else {
+        //   final List<flutter_blue.BluetoothCharacteristic>
+        //       writableWithoutResponseCharacteristics = bluetoothService
+        //           .characteristics
+        //           .where((flutter_blue.BluetoothCharacteristic
+        //                   bluetoothCharacteristic) =>
+        //               bluetoothCharacteristic.properties.writeWithoutResponse ==
+        //               true)
+        //           .toList();
+        //   if (writableWithoutResponseCharacteristics.isNotEmpty) {
+        //     print(
+        //         'services writableWithoutResponse = ${writableWithoutResponseCharacteristics.length}');
+        //     await writableWithoutResponseCharacteristics[0]
+        //         .write(byteBuffer, withoutResponse: true);
+        //   }
+        // }
       }
     } on Exception catch (error) {
       print('$runtimeType - Error $error');
