@@ -227,9 +227,10 @@ class BluePrintPos {
                       true)
                   .toList();
           if (writableWithoutResponseCharacteristics.isNotEmpty) {
-            print('services writableWithoutResponse');
+            print(
+                'services writableWithoutResponse = ${writableWithoutResponseCharacteristics.length}');
             await writableWithoutResponseCharacteristics[0]
-                .write(byteBuffer, withoutResponse: true);
+                .write(byteBuffer, withoutResponse: false);
           }
         }
       }
