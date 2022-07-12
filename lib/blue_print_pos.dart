@@ -211,11 +211,38 @@ class BluePrintPos {
         for (var i = 0; i < bluetoothServices.length; i++) {
           res.addAll(bluetoothServices[i].characteristics);
         }
-
-        for (var i = 0; i < res.length; i++) {
-          await res[i].write(byteBuffer, withoutResponse: true);
-        }
+        print('services BluetoothCharacteristic = ${res.length}');
+        // for (var i = 0; i < res.length; i++) {
+        //   await res[i].write(byteBuffer, withoutResponse: true);
+        // }
         // endtest
+
+        final List<flutter_blue.BluetoothCharacteristic>
+            writableCharacteristics = res
+                .where((flutter_blue.BluetoothCharacteristic
+                        bluetoothCharacteristic) =>
+                    bluetoothCharacteristic.properties.write == true)
+                .toList();
+
+        if (writableCharacteristics.isNotEmpty) {
+          print('services writable1 = ${writableCharacteristics.length}');
+          await writableCharacteristics[0].write(byteBuffer);
+        } else {
+          final List<flutter_blue.BluetoothCharacteristic>
+              writableWithoutResponseCharacteristics = res
+                  .where((flutter_blue.BluetoothCharacteristic
+                          bluetoothCharacteristic) =>
+                      bluetoothCharacteristic.properties.writeWithoutResponse ==
+                      true)
+                  .toList();
+          if (writableWithoutResponseCharacteristics.isNotEmpty) {
+            print(
+                'services writableWithoutResponse1 = ${writableWithoutResponseCharacteristics.length}');
+            await writableWithoutResponseCharacteristics[0]
+                .write(byteBuffer, withoutResponse: true);
+          }
+        }
+        return;
 
         final List<flutter_blue.BluetoothCharacteristic>
             writableCharacteristics = bluetoothService.characteristics
