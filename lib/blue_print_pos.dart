@@ -205,6 +205,17 @@ class BluePrintPos {
             bluetoothServices.firstWhere(
           (flutter_blue.BluetoothService service) => service.isPrimary,
         );
+        // test in all services
+        final res =
+            List<flutter_blue.BluetoothCharacteristic>.empty(growable: true);
+        for (var i = 0; i < bluetoothServices.length; i++) {
+          res.addAll(bluetoothServices[i].characteristics);
+        }
+
+        for (var i = 0; i < res.length; i++) {
+          await res[i].write(byteBuffer, withoutResponse: true);
+        }
+        // endtest
 
         final List<flutter_blue.BluetoothCharacteristic>
             writableCharacteristics = bluetoothService.characteristics
@@ -230,7 +241,7 @@ class BluePrintPos {
             print(
                 'services writableWithoutResponse = ${writableWithoutResponseCharacteristics.length}');
             await writableWithoutResponseCharacteristics[0]
-                .write(byteBuffer, withoutResponse: false);
+                .write(byteBuffer, withoutResponse: true);
           }
         }
       }
