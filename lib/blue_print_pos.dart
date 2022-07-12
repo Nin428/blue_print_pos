@@ -200,21 +200,38 @@ class BluePrintPos {
         final List<flutter_blue.BluetoothService> bluetoothServices =
             await _bluetoothDeviceIOS?.discoverServices() ??
                 <flutter_blue.BluetoothService>[];
+        print('services length = ${bluetoothServices.length}');
         final flutter_blue.BluetoothService bluetoothService =
             bluetoothServices.firstWhere(
           (flutter_blue.BluetoothService service) => service.isPrimary,
         );
-        final flutter_blue.BluetoothCharacteristic characteristic =
-            bluetoothService.characteristics.firstWhere(
-                (flutter_blue.BluetoothCharacteristic bluetoothCharacteristic) {
-          // write might no be found for low price printer
-          if (bluetoothCharacteristic.properties.write) {
-            return bluetoothCharacteristic.properties.write;
-          } else {
-            return bluetoothCharacteristic.properties.writeWithoutResponse;
+
+        final List<flutter_blue.BluetoothCharacteristic>
+            writableCharacteristics = bluetoothService.characteristics
+                .where((flutter_blue.BluetoothCharacteristic
+                        bluetoothCharacteristic) =>
+                    bluetoothCharacteristic.properties.write == true)
+                .toList();
+
+        if (writableCharacteristics.isNotEmpty) {
+          print('services writable');
+          await writableCharacteristics[0]
+              .write(byteBuffer, withoutResponse: true);
+        } else {
+          final List<flutter_blue.BluetoothCharacteristic>
+              writableWithoutResponseCharacteristics = bluetoothService
+                  .characteristics
+                  .where((flutter_blue.BluetoothCharacteristic
+                          bluetoothCharacteristic) =>
+                      bluetoothCharacteristic.properties.writeWithoutResponse ==
+                      true)
+                  .toList();
+          if (writableWithoutResponseCharacteristics.isNotEmpty) {
+            print('services writableWithoutResponse');
+            await writableWithoutResponseCharacteristics[0]
+                .write(byteBuffer, withoutResponse: true);
           }
-        });
-        await characteristic.write(byteBuffer, withoutResponse: true);
+        }
       }
     } on Exception catch (error) {
       print('$runtimeType - Error $error');
