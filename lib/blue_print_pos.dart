@@ -239,7 +239,7 @@ class BluePrintPos {
 
   List<List<int>> _getChunks(List<int> byteBuffer) {
     final List<List<int>> chunks = List<List<int>>.empty(growable: true);
-    const int chunkLen = 512;
+    const int chunkLen = 1024;
     for (int i = 0; i < byteBuffer.length; i += chunkLen) {
       chunks.add(byteBuffer.sublist(i, min(i + chunkLen, byteBuffer.length)));
     }
