@@ -200,76 +200,34 @@ class BluePrintPos {
         final List<flutter_blue.BluetoothService> bluetoothServices =
             await _bluetoothDeviceIOS?.discoverServices() ??
                 <flutter_blue.BluetoothService>[];
-        print('services length = ${bluetoothServices.length}');
-        final flutter_blue.BluetoothService bluetoothService =
-            bluetoothServices.firstWhere(
-          (flutter_blue.BluetoothService service) => service.isPrimary,
-        );
-        // test in all services
-        final res =
+        // get all characteristics from all services
+        final List<flutter_blue.BluetoothCharacteristic> characteristics =
             List<flutter_blue.BluetoothCharacteristic>.empty(growable: true);
-        for (var i = 0; i < bluetoothServices.length; i++) {
-          res.addAll(bluetoothServices[i].characteristics);
+        for (int i = 0; i < bluetoothServices.length; i++) {
+          characteristics.addAll(bluetoothServices[i].characteristics);
         }
-        print('services BluetoothCharacteristic = ${res.length}');
-        // for (var i = 0; i < res.length; i++) {
-        //   await res[i].write(byteBuffer, withoutResponse: true);
-        // }
-        // endtest
-
         final List<flutter_blue.BluetoothCharacteristic>
-            writableCharacteristics = res
+            writableCharacteristics = characteristics
                 .where((flutter_blue.BluetoothCharacteristic
                         bluetoothCharacteristic) =>
                     bluetoothCharacteristic.properties.write == true)
                 .toList();
 
         if (writableCharacteristics.isNotEmpty) {
-          print('services writable1 = ${writableCharacteristics.length}');
           await writableCharacteristics[0].write(byteBuffer);
         } else {
           final List<flutter_blue.BluetoothCharacteristic>
-              writableWithoutResponseCharacteristics = res
+              writableWithoutResponseCharacteristics = characteristics
                   .where((flutter_blue.BluetoothCharacteristic
                           bluetoothCharacteristic) =>
                       bluetoothCharacteristic.properties.writeWithoutResponse ==
                       true)
                   .toList();
           if (writableWithoutResponseCharacteristics.isNotEmpty) {
-            print(
-                'services writableWithoutResponse1 = ${writableWithoutResponseCharacteristics.length}');
             await writableWithoutResponseCharacteristics[0]
                 .write(byteBuffer, withoutResponse: true);
           }
         }
-
-        // final List<flutter_blue.BluetoothCharacteristic>
-        //     writableCharacteristics = bluetoothService.characteristics
-        //         .where((flutter_blue.BluetoothCharacteristic
-        //                 bluetoothCharacteristic) =>
-        //             bluetoothCharacteristic.properties.write == true)
-        //         .toList();
-
-        // if (writableCharacteristics.isNotEmpty) {
-        //   print('services writable');
-        //   await writableCharacteristics[0]
-        //       .write(byteBuffer, withoutResponse: true);
-        // } else {
-        //   final List<flutter_blue.BluetoothCharacteristic>
-        //       writableWithoutResponseCharacteristics = bluetoothService
-        //           .characteristics
-        //           .where((flutter_blue.BluetoothCharacteristic
-        //                   bluetoothCharacteristic) =>
-        //               bluetoothCharacteristic.properties.writeWithoutResponse ==
-        //               true)
-        //           .toList();
-        //   if (writableWithoutResponseCharacteristics.isNotEmpty) {
-        //     print(
-        //         'services writableWithoutResponse = ${writableWithoutResponseCharacteristics.length}');
-        //     await writableWithoutResponseCharacteristics[0]
-        //         .write(byteBuffer, withoutResponse: true);
-        //   }
-        // }
       }
     } on Exception catch (error) {
       print('$runtimeType - Error $error');
