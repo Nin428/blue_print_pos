@@ -1,5 +1,6 @@
-import 'dart:developer';
+import 'dart:developer' as developer;
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -214,7 +215,9 @@ class BluePrintPos {
                 .toList();
 
         if (writableCharacteristics.isNotEmpty) {
-          await writableCharacteristics[0].write(byteBuffer);
+          // await writableCharacteristics[0].write(byteBuffer);
+          final List<List<int>> data = _getChunks(byteBuffer);
+          await _tryPrintIOS(writableCharacteristics[0], data);
         } else {
           final List<flutter_blue.BluetoothCharacteristic>
               writableWithoutResponseCharacteristics = characteristics
@@ -232,6 +235,29 @@ class BluePrintPos {
     } on Exception catch (error) {
       print('$runtimeType - Error $error');
     }
+  }
+
+  List<List<int>> _getChunks(List<int> byteBuffer) {
+    final List<List<int>> chunks = List<List<int>>.empty(growable: true);
+    const int chunkLen = 512;
+    for (int i = 0; i < byteBuffer.length; i += chunkLen) {
+      chunks.add(byteBuffer.sublist(i, min(i + chunkLen, byteBuffer.length)));
+    }
+    return chunks;
+  }
+
+  Future<bool> _tryPrintIOS(
+    flutter_blue.BluetoothCharacteristic characteristic,
+    List<List<int>> data,
+  ) async {
+    for (int i = 0; i < data.length; i++) {
+      try {
+        await characteristic.write(data[i]);
+      } catch (e) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /// This method to convert byte from [data] into as image canvas.
@@ -302,7 +328,7 @@ class BluePrintPos {
       results = await _channel.invokeMethod('contentToImage', arguments) ??
           Uint8List.fromList(<int>[]);
     } on Exception catch (e) {
-      log('[method:contentToImage]: $e');
+      developer.log('[method:contentToImage]: $e');
       throw Exception('Error: $e');
     }
     return results;
