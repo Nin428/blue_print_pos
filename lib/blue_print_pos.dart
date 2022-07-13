@@ -215,9 +215,10 @@ class BluePrintPos {
                 .toList();
 
         if (writableCharacteristics.isNotEmpty) {
-          // await writableCharacteristics[0].write(byteBuffer);
-          final List<List<int>> data = _getChunks(byteBuffer);
-          await _tryPrintIOS(writableCharacteristics[0], data);
+          await writableCharacteristics[0].write(byteBuffer);
+          // below : Failed when print
+          // final List<List<int>> data = _getChunks(byteBuffer);
+          // await _tryPrintIOS(writableCharacteristics[0], data);
         } else {
           final List<flutter_blue.BluetoothCharacteristic>
               writableWithoutResponseCharacteristics = characteristics
