@@ -26,22 +26,20 @@ class BlueScanner {
           )
           .toList();
     } else if (Platform.isIOS) {
-      final flutter_blue.FlutterBluePlus bluetoothIOS =
-          flutter_blue.FlutterBluePlus.instance;
       final List<flutter_blue.BluetoothDevice> resultDevices =
           <flutter_blue.BluetoothDevice>[];
 
-      await bluetoothIOS.startScan(
+      await flutter_blue.FlutterBluePlus.startScan(
         timeout: const Duration(seconds: 5),
       );
-      bluetoothIOS.scanResults
+      flutter_blue.FlutterBluePlus.scanResults
           .listen((List<flutter_blue.ScanResult> scanResults) {
         for (final flutter_blue.ScanResult scanResult in scanResults) {
           resultDevices.add(scanResult.device);
         }
       });
 
-      await bluetoothIOS.stopScan();
+      await flutter_blue.FlutterBluePlus.stopScan();
       devices = resultDevices
           .toSet()
           .toList()
