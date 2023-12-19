@@ -168,24 +168,31 @@ class BluePrintPos {
     );
   }
 
-  Future<void> printBytes(List<int> byteBuffer) async {
+  Future<bool?> printBytes(List<int> byteBuffer) async {
     return _printProcess(byteBuffer);
   }
 
   /// Reusable method for print text, image or QR based value [byteBuffer]
   /// Handler Android or iOS will use method writeBytes from ByteBuffer
   /// But in iOS more complex handler using service and characteristic
-  Future<void> _printProcess(List<int> byteBuffer) async {
+  Future<bool?> _printProcess(List<int> byteBuffer) async {
+    bool result = true;
     try {
       if (selectedDevice == null) {
         print('$runtimeType - Device not selected');
-        return Future<void>.value(null);
+        result = false;
       }
       if (!_isConnected && selectedDevice != null) {
         await connect(selectedDevice!);
       }
       if (Platform.isAndroid) {
-        _bluetoothAndroid?.writeBytes(Uint8List.fromList(byteBuffer));
+        final dynamic printResult = await _bluetoothAndroid?.writeBytes(Uint8List.fromList(byteBuffer));
+        if (printResult is bool) {
+          result = printResult;
+        } else {
+          result = false;
+        }
+        
       } else if (Platform.isIOS) {
         final List<flutter_blue.BluetoothService> bluetoothServices =
             await _bluetoothDeviceIOS?.discoverServices() ??
@@ -224,7 +231,9 @@ class BluePrintPos {
       }
     } on Exception catch (error) {
       print('$runtimeType - Error $error');
+      result = false;
     }
+     return result;
   }
 
   List<List<int>> _getChunks(List<int> byteBuffer) {
