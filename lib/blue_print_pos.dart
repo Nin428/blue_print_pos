@@ -236,6 +236,12 @@ class BluePrintPos {
      return result;
   }
 
+  Future<void> cut() async {
+    if (Platform.isAndroid) {
+      await _bluetoothAndroid?.paperCut();
+    }
+  }
+
   List<List<int>> _getChunks(List<int> byteBuffer) {
     final List<List<int>> chunks = List<List<int>>.empty(growable: true);
     const int chunkLen = 1024;
