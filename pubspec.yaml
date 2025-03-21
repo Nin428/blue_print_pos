@@ -11,7 +11,7 @@ dependencies:
   # Handler bluetooth for Android
   blue_thermal_printer:
   # Utilities for generate ByteBuffer
-  esc_pos_utils_plus:
+  esc_pos_utils_plus: ^2.0.4
   # Framework
   flutter:
     sdk: flutter
