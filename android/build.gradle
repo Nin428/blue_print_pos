@@ -31,7 +31,6 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
     defaultConfig {
-        applicationId "com.ayeee.blue_print_pos"
         minSdkVersion 16
     }
 
